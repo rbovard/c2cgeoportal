@@ -98,10 +98,10 @@ RUN \
     rm -rf /tmp/*
 
 RUN npm-packages \
-    @types @typescript-eslint @storybook ol-cesium jasmine-core karma karma-chrome-launcher \
+    @typescript-eslint @storybook ol-cesium jasmine-core karma karma-chrome-launcher \
     karma-jasmine karma-sinon karma-sourcemap-loader karma-webpack \
     typedoc jsdoc jsdoc-plugin-typescript typescript \
-    jscodeshift chromatic cypress doctrine prettier react react-dom sass start-server-and-test \
+    jscodeshift chromatic doctrine prettier react react-dom sass start-server-and-test \
     --src=/usr/lib/node_modules/ngeo/package.json --src=package.json --dst=npm-packages
 
 # Workaround to fix the chokidar error
@@ -119,6 +119,12 @@ RUN \
     npm install --no-optional --global --unsafe-perm --no-package-lock $(cat /opt/c2cgeoportal/geoportal/npm-packages) && \
     npm cache clear --force && \
     rm -rf /tmp/*
+RUN \
+    mkdir -p /usr/lib/node_modules/@lit && \
+    ln -s /usr/lib/node_modules/lit/node_modules/@lit/reactive-element /usr/lib/node_modules/@lit/ && \
+    ln -s /usr/lib/node_modules/lit/node_modules/lit-element /usr/lib/node_modules/ && \
+    ln -s /usr/lib/node_modules/lit/node_modules/lit-html /usr/lib/node_modules/ && \
+    ln -s /usr/lib/node_modules/@babel/preset-env/node_modules/regenerator-runtime /usr/lib/node_modules/
 RUN \
     git clone --branch=v1.7.x --depth=1 --single-branch https://github.com/angular/angular.js.git \
     /tmp/angular && \
