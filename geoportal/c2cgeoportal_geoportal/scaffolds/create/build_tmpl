@@ -72,11 +72,26 @@ def main() -> None:
             print(f"Error: the env file '{env_file}' does not exist.")
             sys.exit(1)
 
+    simple = not os.path.exists("geoportal/Dockerfile")
+    if args.simple:
+        simple = True
+    if args.not_simple:
+        simple = False
+
+    git_hash = (
+        subprocess.run(["git", "rev-parse", "HEAD"], check=True, stdout=subprocess.PIPE)
+        .stdout.strip()
+        .decode()
+    )
+
     with open(".env", "w", encoding="utf-8") as dest:
         for file_ in env_files:
             with open(file_, encoding="utf-8") as src:
                 dest.write(src.read() + "\n")
         dest.write(f"# Used env files: {' '.join(env_files)}\n")
+        dest.write("\n")
+        dest.write(f"SIMPLE={simple}\n")
+        dest.write(f"GIT_HASH={git_hash}\n")
 
     if not args.env:
         env = {"PATH": os.environ["PATH"]}
@@ -87,18 +102,8 @@ def main() -> None:
             subprocess.run(["docker-compose", "pull"], check=True)  # nosec
             docker_compose_build_cmd.append("--pull")
 
-        simple = not os.path.exists("geoportal/Dockerfile")
-        if args.simple:
-            simple = True
-        if args.not_simple:
-            simple = False
         env["SIMPLE"] = str(simple).upper()
-
-        env["GIT_HASH"] = (
-            subprocess.run(["git", "rev-parse", "HEAD"], check=True, stdout=subprocess.PIPE)
-            .stdout.strip()
-            .decode()
-        )
+        env["GIT_HASH"] = git_hash
 
         if args.service:
             docker_compose_build_cmd.append(args.service)
