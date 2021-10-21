@@ -33,8 +33,6 @@ module.exports = (env, argv) => {
               babelrc: false,
               comments: false,
               plugins: [
-                require.resolve('@babel/plugin-syntax-object-rest-spread'),
-                require.resolve('@babel/plugin-transform-spread'),
                 require.resolve('babel-plugin-angularjs-annotate'),
               ],
             },

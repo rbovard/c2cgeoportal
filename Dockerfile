@@ -98,9 +98,10 @@ RUN \
     rm -rf /tmp/*
 
 RUN npm-packages \
-    @types @typescript-eslint ol-cesium jasmine-core karma karma-chrome-launcher \
+    @types @typescript-eslint @storybook ol-cesium jasmine-core karma karma-chrome-launcher \
     karma-jasmine karma-sinon karma-sourcemap-loader karma-webpack \
     typedoc jsdoc jsdoc-plugin-typescript typescript \
+    jscodeshift chromatic cypress doctrine prettier react react-dom sass start-server-and-test \
     --src=/usr/lib/node_modules/ngeo/package.json --src=package.json --dst=npm-packages
 
 # Workaround to fix the chokidar error
