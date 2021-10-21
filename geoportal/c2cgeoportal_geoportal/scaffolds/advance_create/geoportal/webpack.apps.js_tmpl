@@ -31,11 +31,12 @@ for (const filename of ls(
 }
 
 const babelPresets = [
+  "@babel/typescript",
   [
     require.resolve('@babel/preset-env'),
     {
       targets: {
-        browsers: ['> 0.5% in CH', '> 0.5% in FR', 'Firefox ESR', 'ie 11'],
+        browsers: ['> 0.5% in CH', '> 0.5% in FR', 'Firefox ESR'],
       },
       modules: false,
       loose: true,
@@ -53,15 +54,28 @@ const projectRule = {
       babelrc: false,
       comments: false,
       plugins: [
-        require.resolve('@babel/plugin-syntax-object-rest-spread'),
-        require.resolve('@babel/plugin-transform-spread'),
+        ["@babel/plugin-proposal-decorators", {decoratorsBeforeExport: true}],
         require.resolve('babel-plugin-angularjs-annotate'),
       ],
     },
   },
 };
-
-const rules = [projectRule];
+const typescriptRule = {
+  test: /.*\.tsx?$/,
+  use: {
+    loader: 'babel-loader',
+    options: {
+      presets: babelPresets,
+      babelrc: false,
+      comments: false,
+      plugins: [
+        ["@babel/plugin-proposal-decorators", {decoratorsBeforeExport: true}],
+        require.resolve('babel-plugin-angularjs-annotate'),
+      ],
+    },
+  },
+};
+const rules = [projectRule, typescriptRule];
 
 const noDevServer = process.env['NO_DEV_SERVER'] == 'TRUE';
 const devServer = dev && !noDevServer;
