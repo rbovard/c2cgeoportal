@@ -54,7 +54,7 @@ const projectRule = {
       babelrc: false,
       comments: false,
       plugins: [
-        "@babel/plugin-proposal-decorators",
+        ["@babel/plugin-proposal-decorators", {decoratorsBeforeExport: false}],
         require.resolve('babel-plugin-angularjs-annotate'),
       ],
     },
