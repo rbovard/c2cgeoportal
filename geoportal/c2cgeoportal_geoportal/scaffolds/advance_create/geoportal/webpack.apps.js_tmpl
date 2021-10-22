@@ -60,7 +60,13 @@ const projectRule = {
   },
 };
 
-const rules = [projectRule];
+const projectRuleSourceMap = {
+  test: /\.js$/,
+  use: ["source-map-loader"],
+  enforce: "pre"
+};
+
+const rules = [projectRule, projectRuleSourceMap];
 
 const noDevServer = process.env['NO_DEV_SERVER'] == 'TRUE';
 const devServer = dev && !noDevServer;
