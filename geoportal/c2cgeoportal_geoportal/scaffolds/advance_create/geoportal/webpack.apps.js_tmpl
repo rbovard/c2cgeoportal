@@ -32,7 +32,6 @@ for (const filename of ls(
 
 const babelPresets = [
   "@babel/typescript",
-  "@babel/plugin-proposal-decorators",
   [
     require.resolve('@babel/preset-env'),
     {
@@ -55,6 +54,7 @@ const projectRule = {
       babelrc: false,
       comments: false,
       plugins: [
+        "@babel/plugin-proposal-decorators",
         require.resolve('babel-plugin-angularjs-annotate'),
       ],
     },
