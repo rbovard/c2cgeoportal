@@ -7,8 +7,6 @@
     "@babel/preset-typescript": "7.15.0",
     "ngeo": "2.7.0-latest.20211021T123323Z.587eaad93.HEAD",
     "eslint-plugin-jsdoc": "36.1.1",
-    "raw-loader": "4.0.2",
-    "source-map-loader": "3.0.0",
-    "typescript": "4.4.4"
+    "raw-loader": "4.0.2"
   }
 }
