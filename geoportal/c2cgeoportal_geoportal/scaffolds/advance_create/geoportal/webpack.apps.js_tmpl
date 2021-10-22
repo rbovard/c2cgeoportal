@@ -60,8 +60,22 @@ const projectRule = {
     },
   },
 };
-
-const rules = [projectRule];
+const typescriptRule = {
+  test: /.*\.tsx?$/,
+  use: {
+    loader: 'babel-loader',
+    options: {
+      presets: babelPresets,
+      babelrc: false,
+      comments: false,
+      plugins: [
+        ["@babel/plugin-proposal-decorators", {decoratorsBeforeExport: false}],
+        require.resolve('babel-plugin-angularjs-annotate'),
+      ],
+    },
+  },
+};
+const rules = [projectRule, typescriptRule];
 
 const noDevServer = process.env['NO_DEV_SERVER'] == 'TRUE';
 const devServer = dev && !noDevServer;
