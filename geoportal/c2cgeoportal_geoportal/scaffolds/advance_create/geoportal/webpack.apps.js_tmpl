@@ -31,6 +31,7 @@ for (const filename of ls(
 }
 
 const babelPresets = [
+  "@babel/typescript",
   [
     require.resolve('@babel/preset-env'),
     {
@@ -59,13 +60,7 @@ const projectRule = {
   },
 };
 
-// Collect every ts(x) files.
-const tsRule = {
-  test: /\.tsx?$/,
-  use: 'ts-loader',
-};
-
-const rules = [projectRule, tsRule];
+const rules = [projectRule];
 
 const noDevServer = process.env['NO_DEV_SERVER'] == 'TRUE';
 const devServer = dev && !noDevServer;
