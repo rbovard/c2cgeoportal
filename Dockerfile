@@ -115,12 +115,6 @@ RUN \
     npm cache clear --force && \
     rm -rf /tmp/*
 RUN \
-    mkdir -p /usr/lib/node_modules/@lit && \
-    ln -s /usr/lib/node_modules/lit/node_modules/@lit/reactive-element /usr/lib/node_modules/@lit/ && \
-    ln -s /usr/lib/node_modules/lit/node_modules/lit-element /usr/lib/node_modules/ && \
-    ln -s /usr/lib/node_modules/lit/node_modules/lit-html /usr/lib/node_modules/ && \
-    ln -s /usr/lib/node_modules/@babel/preset-env/node_modules/regenerator-runtime /usr/lib/node_modules/
-RUN \
     git clone --branch=v1.7.x --depth=1 --single-branch https://github.com/angular/angular.js.git \
     /tmp/angular && \
     mv /tmp/angular/src/ngLocale/ /opt/angular-locale/ &&\
