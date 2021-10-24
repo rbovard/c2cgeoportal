@@ -31,12 +31,12 @@ for (const filename of ls(
 }
 
 const babelPresets = [
-  "@babel/typescript",
+  require.resolve('@babel/typescript',
   [
     require.resolve('@babel/preset-env'),
     {
       targets: {
-        browsers: ['> 0.5% in CH', '> 0.5% in FR', 'Firefox ESR'],
+        browsers: ['> 0.7% in CH', '> 0.7% in FR', 'Firefox ESR'],
       },
       modules: false,
       loose: true,
