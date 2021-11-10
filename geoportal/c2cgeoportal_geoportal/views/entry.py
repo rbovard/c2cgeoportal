@@ -26,6 +26,7 @@
 # either expressed or implied, of the FreeBSD Project.
 
 
+import glob
 import logging
 from typing import Any, Dict, Optional
 
@@ -96,3 +97,52 @@ class Entry:
     def apihelp(self) -> Dict[str, Any]:
         set_common_headers(self.request, "apihelp", Cache.PUBLIC)
         return {}
+
+
+class SimpleEntry:
+    """
+    The view used as the entrypoint of a simple application.
+
+    This object will not be build by Pyramid, but by the application itself at startup time.
+
+    The interface config is a dictionary containing the following keys:
+        name: the name of the interface.
+        layout: the layout of the interface -> the used built files (js and css) from ngeo.
+    """
+
+    def __init__(self, config: Dict[str, Any]):
+        self.config = config
+
+    def __call__(self, request: pyramid.request.Request) -> Dict[str, Any]:
+        js_files = glob.glob(f"/usr/lib/node_modules/ngeo/dist/{self.config['layout']}*.js")
+        css_files = glob.glob(f"/usr/lib/node_modules/ngeo/dist/{self.config['layout']}*.css")
+        spinner_file = glob.glob("/usr/lib/node_modules/ngeo/dist/spinner*.svg")[0]
+        background_layer_button_file = glob.glob(
+            "/usr/lib/node_modules/ngeo/dist/background-layer-button*.png"
+        )[0]
+        css = "\n    ".join(
+            [
+                f'<link href="{request.static_url(css)}" rel="stylesheet" crossorigin="anonymous">'
+                for css in css_files
+            ]
+        )
+
+        set_common_headers(request, "index", Cache.PUBLIC_NO, content_type="text/html")
+
+        return {
+            "request": request,
+            "header": f"""
+    <meta name="dynamicUrl" content="{request.route_url("dynamic.json")}">
+    <meta name="interface" content="{self.config['name']}">
+    {css}""",
+            "footer": "\n    ".join(
+                [
+                    f'<script src="{request.static_url(js)}" crossorigin="anonymous"></script>'
+                    for js in js_files
+                ]
+            ),
+            "static": {
+                "spinner": request.static_url(spinner_file),
+                "background-layer-button": request.static_url(background_layer_button_file),
+            },
+        }

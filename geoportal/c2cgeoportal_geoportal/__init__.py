@@ -65,7 +65,7 @@ from c2cgeoportal_geoportal.lib.metrics import (
     TotalPythonObjectMemoryProvider,
 )
 from c2cgeoportal_geoportal.lib.xsd import XSD
-from c2cgeoportal_geoportal.views.entry import Entry
+from c2cgeoportal_geoportal.views.entry import Entry, SimpleEntry
 
 if TYPE_CHECKING:
     from c2cgeoportal_commons.models import static  # pylint: disable=ungrouped-imports,useless-suppression
@@ -92,23 +92,42 @@ class AssetRendererFactory:
 
 
 INTERFACE_TYPE_NGEO = "ngeo"
+INTERFACE_TYPE_SIMPLE = "simple"
+
+
+def add_interface_config(config: pyramid.config.Configurator, interface_config: Dict[str, Any]) -> None:
+    """Add the interface (desktop, mobile, ...) views and routes with only the config."""
+    add_interface(
+        config,
+        interface_config["name"],
+        interface_config.get("type", INTERFACE_TYPE_NGEO),
+        interface_config,
+        default=interface_config.get("default", False),
+    )
 
 
 def add_interface(
     config: pyramid.config.Configurator,
     interface_name: str = "desktop",
     interface_type: str = INTERFACE_TYPE_NGEO,
+    interface_config: Optional[Dict[str, Any]] = None,
     default: bool = False,
     **kwargs: Any,
 ) -> None:
     """Add the interface (desktop, mobile, ...) views and routes."""
-    del interface_type  # unused
+    renderer = (
+        f"/etc/static-ngeo/{interface_name}.html"
+        if interface_type == INTERFACE_TYPE_NGEO
+        else f"/etc/geomapfish/interfaces/{interface_name}.html.mako"
+    )
     route = "/" if default else f"/{interface_name}"
     add_interface_ngeo(
         config,
         route_name=interface_name,
         route=route,
-        renderer=f"/etc/static-ngeo/{interface_name}.html",
+        interface_type=interface_type,
+        interface_config=interface_config,
+        renderer=renderer,
         **kwargs,
     )
 
@@ -117,28 +136,41 @@ def add_interface_ngeo(
     config: pyramid.config.Configurator,
     route_name: str,
     route: str,
+    interface_type: str,
+    interface_config: Optional[Dict[str, Any]],
     renderer: Optional[str] = None,
     permission: Optional[str] = None,
 ) -> None:
     """Add the ngeo interfaces views and routes."""
 
     config.add_route(route_name, route, request_method="GET")
-    config.add_view(
-        Entry, attr="get_ngeo_index_vars", route_name=route_name, renderer=renderer, permission=permission
-    )
     # Permalink theme: recover the theme for generating custom viewer.js url
     config.add_route(
         f"{route_name}theme",
         f"{route}{'' if route[-1] == '/' else '/'}theme/{{themes}}",
         request_method="GET",
     )
-    config.add_view(
-        Entry,
-        attr="get_ngeo_index_vars",
-        route_name=f"{route_name}theme",
-        renderer=renderer,
-        permission=permission,
-    )
+    if interface_type == INTERFACE_TYPE_NGEO:
+        config.add_view(
+            Entry, attr="get_ngeo_index_vars", route_name=route_name, renderer=renderer, permission=permission
+        )
+        config.add_view(
+            Entry,
+            attr="get_ngeo_index_vars",
+            route_name=f"{route_name}theme",
+            renderer=renderer,
+            permission=permission,
+        )
+    else:
+        assert interface_config is not None
+        entry = SimpleEntry(interface_config)
+        config.add_view(entry, route_name=route_name, renderer=renderer, permission=permission)
+        config.add_view(
+            entry,
+            route_name=f"{route_name}theme",
+            renderer=renderer,
+            permission=permission,
+        )
 
 
 def add_admin_interface(config: pyramid.config.Configurator) -> None:
@@ -618,6 +650,13 @@ def includeme(config: pyramid.config.Configurator) -> None:
         cache_max_age=int(config.get_settings()["default_max_age"]),
     )
     config.add_cache_buster("c2cgeoportal_geoportal:static", version_cache_buster)
+
+    # Add the project static view without cache buster
+    config.add_static_view(
+        name="static-ngeo-dist",
+        path="/usr/lib/node_modules/ngeo/dist",
+        cache_max_age=int(config.get_settings()["default_max_age"]),
+    )
 
     # Handles the other HTTP errors raised by the views. Without that,
     # the client receives a status=200 without content.

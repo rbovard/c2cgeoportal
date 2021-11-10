@@ -136,6 +136,9 @@ COPY build.mk lingua.cfg ./
 
 RUN mv bin/import-ngeo-apps bin/eval-templates bin/wait-db bin/transifex-init bin/run bin/run-git /usr/bin/
 RUN make --makefile=build.mk build
+RUN mkdir -p geoportal/c2cgeoportal_geoportal/scaffolds/update/CONST_create_template/geoportal/interfaces/
+RUN import-ngeo-apps --html --simple desktop_alt /usr/lib/node_modules/ngeo/contribs/gmf/apps/desktop_alt/index.html.ejs \
+    geoportal/c2cgeoportal_geoportal/scaffolds/update/CONST_create_template/geoportal/interfaces/desktop_alt.html.mako
 
 COPY commons/ commons/
 COPY geoportal/ geoportal/
