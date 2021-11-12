@@ -69,7 +69,7 @@ then
             cp CONST_create_template/${file} ${file}
         done
 
-        file=geoportal/interfaces/desktop_alt.html.mako
+        file=geoportal/interfaces
         cp CONST_create_template/${file} ${file}
 
         sed -i '1iNGEO_INTERFACES ?= desktop mobile iframe_api mobile_alt oeedit' geoportal/Makefile
