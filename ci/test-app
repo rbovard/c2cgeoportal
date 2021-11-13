@@ -11,6 +11,12 @@ cp -r ci/test-external-db ${HOME}/workspace/testgeomapfishapp/ci/
 PROJECT_DIR=$(pwd)
 
 cd ${HOME}/workspace/testgeomapfishapp/
+
+file=geoportal/interfaces
+cp -r CONST_create_template/${file} ${file}
+
+sed -i 's/- name: iframe_api/- name: iframe_api\n    - name: desktop_alt\n      type: simple\n      layout: desktop/g' geoportal/vars.yaml
+
 c2cciutils-checks
 cp ${PROJECT_DIR}/ci/project-config.yaml ci/config.yaml
 c2cciutils-checks
