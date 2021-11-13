@@ -68,14 +68,13 @@ then
         do
             cp CONST_create_template/${file} ${file}
         done
-
-        file=geoportal/interfaces
-        cp -r CONST_create_template/${file} ${file}
-
-        sed -i '1iNGEO_INTERFACES ?= desktop mobile iframe_api mobile_alt oeedit' geoportal/Makefile
-
-        sed -i 's/- name: iframe_api/- name: iframe_api\n    - name: desktop_alt\n      type: simple\n      layout: desktop/g' geoportal/vars.yaml
     done
+    sed -i '1iNGEO_INTERFACES ?= desktop mobile iframe_api mobile_alt oeedit' geoportal/Makefile
+else
+    file=geoportal/interfaces
+    cp -r CONST_create_template/${file} ${file}
+
+    sed -i 's/- name: iframe_api/- name: iframe_api\n    - name: desktop_alt\n      type: simple\n      layout: desktop/g' geoportal/vars.yaml
 fi
 
 # Init Git repository
