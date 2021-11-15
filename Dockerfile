@@ -194,6 +194,7 @@ COPY package.json /tmp/
 RUN \
     cd /tmp && \
     npm-packages --src=package.json --dst=npm-packages && \
+    npm --no-optional --global --unsafe-perm --no-package-lock install && \
     npm --no-optional --global --unsafe-perm --no-package-lock install $(cat npm-packages) && \
     npm cache clear --force && \
     rm -rf /tmp/*
