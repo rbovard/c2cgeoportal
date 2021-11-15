@@ -43,6 +43,7 @@ extra:
   - geoportal/{{package}}_geoportal/static-ngeo/js/apps/sass/oeedit\.scss
   - geoportal/{{package}}_geoportal/static-ngeo/js/apps/sass/vars_oeedit\.scss
   - geoportal/interfaces/desktop_alt.html.mako
+  - geoportal/testgeomapfish_geoportal/static/images: background-layer-button.png
 
 # Automated file system operations:
 # Remove some files or directories:
