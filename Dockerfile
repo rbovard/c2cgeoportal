@@ -188,13 +188,22 @@ ARG VERSION
 ENV VERSION=$VERSION
 
 COPY bin/npm-packages /usr/bin/
+
+COPY geoportal/package.json /tmp/
+
+RUN \
+    cd /tmp && \
+    npm-packages --src=package.json --dst=npm-packages && \
+    npm --no-optional --global --unsafe-perm --no-package-lock install $(cat npm-packages) && \
+    npm cache clear --force && \
+    rm -rf /tmp/*
+
 COPY package.json /tmp/
 
 # hadolint ignore=SC2046,DL3016,DL3003
 RUN \
     cd /tmp && \
     npm-packages --src=package.json --dst=npm-packages && \
-    npm --no-optional --global --unsafe-perm --no-package-lock install && \
     npm --no-optional --global --unsafe-perm --no-package-lock install $(cat npm-packages) && \
     npm cache clear --force && \
     rm -rf /tmp/*
