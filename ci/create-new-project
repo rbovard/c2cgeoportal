@@ -85,7 +85,6 @@ c2cciutils-checks --fix --check=black
 c2cciutils-checks --fix --check=prettier
 mv ci/config.yaml{_,}
 
-git diff
 git add --all
 git commit --quiet --message='Initial commit'
 git clean -fX

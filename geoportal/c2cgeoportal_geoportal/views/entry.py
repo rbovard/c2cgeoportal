@@ -28,7 +28,8 @@
 
 import glob
 import logging
-from typing import Any, Dict, Optional
+import os
+from typing import Any, Dict, List, Optional
 
 import pyramid.request
 from pyramid.i18n import TranslationStringFactory
@@ -113,13 +114,33 @@ class SimpleEntry:
     def __init__(self, config: Dict[str, Any]):
         self.config = config
 
+    @staticmethod
+    def get_ngeo_ressources(pattern: str) -> List[str]:
+        """
+        Return the list of ngeo dist files matching the pattern.
+        """
+        results = glob.glob(f"/usr/lib/node_modules/ngeo/dist/{pattern}")
+        if not results:
+            LOG.error(
+                f"No file found for pattern {pattern}, in: [{', '.join(os.listdir('/usr/lib/node_modules/ngeo/dist/'))}]"
+            )
+        return results
+
+    def get_ngeo_ressource_url(self, request: pyramid.request.Request, pattern: str) -> str:
+        """
+        Return the ngeo dist URL that match the pattern.
+        """
+        results = self.get_ngeo_ressources(pattern)
+        if not results:
+            LOG.error(
+                f"No file found for pattern {pattern}, in: [{', '.join(os.listdir('/usr/lib/node_modules/ngeo/dist/'))}]"
+            )
+            return f"No file found for {pattern}"
+        return request.static_url(results[0])
+
     def __call__(self, request: pyramid.request.Request) -> Dict[str, Any]:
-        js_files = glob.glob(f"/usr/lib/node_modules/ngeo/dist/{self.config['layout']}*.js")
-        css_files = glob.glob(f"/usr/lib/node_modules/ngeo/dist/{self.config['layout']}*.css")
-        spinner_file = glob.glob("/usr/lib/node_modules/ngeo/dist/spinner*.svg")[0]
-        background_layer_button_file = glob.glob(
-            "/usr/lib/node_modules/ngeo/dist/background-layer-button*.png"
-        )[0]
+        js_files = self.get_ngeo_ressources(f"{self.config['layout']}*.js")
+        css_files = self.get_ngeo_ressources(f"{self.config['layout']}*.css")
         css = "\n    ".join(
             [
                 f'<link href="{request.static_url(css)}" rel="stylesheet" crossorigin="anonymous">'
@@ -142,7 +163,9 @@ class SimpleEntry:
                 ]
             ),
             "static": {
-                "spinner": request.static_url(spinner_file),
-                "background-layer-button": request.static_url(background_layer_button_file),
+                "spinner": self.get_ngeo_ressource_url(request, "spinner*.svg"),
+                "background-layer-button": request.static_url(
+                    "/etc/geomapfish/static/images/background-layer-button.png"
+                ),
             },
         }
