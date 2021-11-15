@@ -116,27 +116,22 @@ class SimpleEntry:
 
     @staticmethod
     def get_ngeo_ressources(pattern: str) -> List[str]:
-        """
-        Return the list of ngeo dist files matching the pattern.
-        """
+        """Return the list of ngeo dist files matching the pattern."""
         results = glob.glob(f"/usr/lib/node_modules/ngeo/dist/{pattern}")
         if not results:
             LOG.error(
-                f"No file found for pattern {pattern}, in: [{', '.join(os.listdir('/usr/lib/node_modules/ngeo/dist/'))}]"
+                "No file found for pattern %s, in: [%s]",
+                pattern,
+                ", ".join(os.listdir("/usr/lib/node_modules/ngeo/dist/")),
             )
         return results
 
     def get_ngeo_ressource_url(self, request: pyramid.request.Request, pattern: str) -> str:
-        """
-        Return the ngeo dist URL that match the pattern.
-        """
+        """Return the ngeo dist URL that match the pattern."""
         results = self.get_ngeo_ressources(pattern)
         if not results:
-            LOG.error(
-                f"No file found for pattern {pattern}, in: [{', '.join(os.listdir('/usr/lib/node_modules/ngeo/dist/'))}]"
-            )
             return f"No file found for {pattern}"
-        return request.static_url(results[0])
+        return request.static_url(results[0])  # type: ignore
 
     def __call__(self, request: pyramid.request.Request) -> Dict[str, Any]:
         js_files = self.get_ngeo_ressources(f"{self.config['layout']}*.js")
