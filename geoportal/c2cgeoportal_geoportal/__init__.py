@@ -654,7 +654,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
     # Add the project static view without cache buster
     config.add_static_view(
         name="static-ngeo-dist",
-        path="/usr/lib/node_modules/ngeo/dist",
+        path="/opt/c2cgeoportal/geoportal/node_modules/ngeo/dist",
         cache_max_age=int(config.get_settings()["default_max_age"]),
     )
 

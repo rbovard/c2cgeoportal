@@ -188,12 +188,11 @@ ENV VERSION=$VERSION
 
 COPY bin/npm-packages /usr/bin/
 
-COPY geoportal/package.json /tmp/
+WORKDIR /opt/c2cgeoportal/geoportal
+COPY geoportal/package.json ./
 
 # hadolint ignore=SC2046,DL3016
-RUN cd /tmp && \
-    npm-packages --src=package.json --dst=npm-packages && \
-    npm --no-optional --global --unsafe-perm --no-package-lock install $(cat npm-packages) && \
+RUN npm --no-optional --unsafe-perm --no-package-lock install && \
     npm cache clear --force && \
     rm -rf /tmp/*
 
