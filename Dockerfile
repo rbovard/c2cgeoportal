@@ -41,9 +41,8 @@ COPY Pipfile Pipfile.lock /tmp/
 # hadolint disable=DL3003
 RUN cd /tmp && PIP_NO_BINARY=fiona,rasterio,shapely PROJ_DIR=/usr/local/ pipenv sync --system --clear && \
     rm --recursive --force /usr/local/lib/python3.*/dist-packages/tests/ /tmp/* /root/.cache/* && \
-    strip /usr/local/lib/python3.*/dist-packages/*/*.so
-
-RUN apt-get auto-remove --assume-yes binutils gcc g++
+    strip /usr/local/lib/python3.*/dist-packages/*/*.so && \
+    apt-get auto-remove --assume-yes binutils gcc g++
 
 ENV NODE_PATH=/usr/lib/node_modules
 ENV TEST=false
@@ -95,9 +94,8 @@ RUN \
     npm-packages --src=package.json --dst=/tmp/npm-packages && \
     npm --no-optional --global --unsafe-perm --no-package-lock install $(cat /tmp/npm-packages) && \
     npm cache clear --force && \
-    rm -rf /tmp/*
-
-RUN npm-packages --src=/usr/lib/node_modules/ngeo/package.json --src=package.json --dst=npm-packages
+    rm -rf /tmp/* && \
+    npm-packages --src=/usr/lib/node_modules/ngeo/package.json --src=package.json --dst=npm-packages
 
 # Workaround to fix the chokidar error
 RUN ln -s /usr/lib/node_modules/webpack-dev-server/node_modules/chokidar /usr/lib/node_modules/
@@ -113,13 +111,11 @@ RUN \
 RUN \
     npm install --no-optional --global --unsafe-perm --no-package-lock $(cat /opt/c2cgeoportal/geoportal/npm-packages) && \
     npm cache clear --force && \
-    rm -rf /tmp/*
-RUN \
+    rm -rf /tmp/* && \
     git clone --branch=v1.7.x --depth=1 --single-branch https://github.com/angular/angular.js.git \
     /tmp/angular && \
     mv /tmp/angular/src/ngLocale/ /opt/angular-locale/ &&\
-    rm -rf /tmp/angular
-RUN \
+    rm -rf /tmp/angular && \
     curl --output /opt/jasperreport.xsd http://jasperreports.sourceforge.net/xsd/jasperreport.xsd
 
 WORKDIR /opt/c2cgeoportal
@@ -134,11 +130,14 @@ COPY scripts/ scripts/
 COPY geoportal/c2cgeoportal_geoportal/scaffolds/ geoportal/c2cgeoportal_geoportal/scaffolds/
 COPY build.mk lingua.cfg ./
 
-RUN mv bin/import-ngeo-apps bin/eval-templates bin/wait-db bin/transifex-init bin/run bin/run-git /usr/bin/
-RUN make --makefile=build.mk build
-RUN mkdir -p geoportal/c2cgeoportal_geoportal/scaffolds/update/CONST_create_template/geoportal/interfaces/
-RUN import-ngeo-apps --html --simple desktop_alt /usr/lib/node_modules/ngeo/contribs/gmf/apps/desktop_alt/index.html.ejs \
-    geoportal/c2cgeoportal_geoportal/scaffolds/update/CONST_create_template/geoportal/interfaces/desktop_alt.html.mako
+RUN mv bin/import-ngeo-apps bin/eval-templates bin/wait-db bin/transifex-init bin/run bin/run-git /usr/bin/ && \
+    make --makefile=build.mk build && \
+    mkdir -p geoportal/c2cgeoportal_geoportal/scaffolds/update/CONST_create_template/geoportal/interfaces/ && \
+    import-ngeo-apps --html --simple desktop_alt /usr/lib/node_modules/ngeo/contribs/gmf/apps/desktop_alt/index.html.ejs \
+    geoportal/c2cgeoportal_geoportal/scaffolds/update/CONST_create_template/geoportal/interfaces/desktop_alt.html.mako && \
+    mkdir -p geoportal/c2cgeoportal_geoportal/scaffolds/update/CONST_create_template/geoportal/+package+_geoportal/static/images/ && \
+    cp /usr/lib/node_modules/ngeo/contribs/gmf/apps/desktop/image/background-layer-button.png \
+    geoportal/c2cgeoportal_geoportal/scaffolds/update/CONST_create_template/geoportal/+package+_geoportal/static/images/
 
 COPY commons/ commons/
 COPY geoportal/ geoportal/
@@ -191,8 +190,8 @@ COPY bin/npm-packages /usr/bin/
 
 COPY geoportal/package.json /tmp/
 
-RUN \
-    cd /tmp && \
+# hadolint ignore=SC2046,DL3016
+RUN cd /tmp && \
     npm-packages --src=package.json --dst=npm-packages && \
     npm --no-optional --global --unsafe-perm --no-package-lock install $(cat npm-packages) && \
     npm cache clear --force && \
@@ -200,9 +199,8 @@ RUN \
 
 COPY package.json /tmp/
 
-# hadolint ignore=SC2046,DL3016,DL3003
-RUN \
-    cd /tmp && \
+# hadolint ignore=SC2046,DL3016
+RUN cd /tmp && \
     npm-packages --src=package.json --dst=npm-packages && \
     npm --no-optional --global --unsafe-perm --no-package-lock install $(cat npm-packages) && \
     npm cache clear --force && \

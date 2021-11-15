@@ -18,7 +18,6 @@ APPS_SASS_FILES += $(addprefix $(APPS_PACKAGE_PATH)/static-ngeo/js/apps/sass/var
 APPS_FILES = $(APPS_HTML_FILES) $(APPS_JS_FILES) $(APPS_SASS_FILES) \
 	$(APPS_PACKAGE_PATH)/static-ngeo/js/apps/contextualdata.html \
 	$(APPS_PACKAGE_PATH)/static-ngeo/js/apps/image/background-layer-button.png \
-	$(APPS_PACKAGE_PATH)/static/images/background-layer-button.png \
 	$(APPS_PACKAGE_PATH)/static-ngeo/js/apps/image/logo.png \
 	$(APPS_PACKAGE_PATH)/static-ngeo/js/apps/image/logo.svg \
 	$(STATIC_PATH)/images/favicon.ico
