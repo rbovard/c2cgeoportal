@@ -117,12 +117,12 @@ class SimpleEntry:
     @staticmethod
     def get_ngeo_ressources(pattern: str) -> List[str]:
         """Return the list of ngeo dist files matching the pattern."""
-        results = glob.glob(f"/usr/lib/node_modules/ngeo/dist/{pattern}")
+        results = glob.glob(f"/opt/c2cgeoportal/geoportal/node_modules/ngeo/dist/{pattern}")
         if not results:
             LOG.error(
                 "No file found for pattern %s, in: [%s]",
                 pattern,
-                ", ".join(os.listdir("/usr/lib/node_modules/ngeo/dist/")),
+                ", ".join(os.listdir("/opt/c2cgeoportal/geoportal/node_modules/ngeo/dist/")),
             )
         return results
 
