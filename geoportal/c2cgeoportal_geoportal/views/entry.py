@@ -148,7 +148,7 @@ class SimpleEntry:
         return {
             "request": request,
             "header": f"""
-    <meta name="dynamicUrl" content="{request.route_url("dynamic.json")}">
+    <meta name="dynamicUrl" content="{request.route_url("dynamic")}">
     <meta name="interface" content="{self.config['name']}">
     {css}""",
             "footer": "\n    ".join(
