@@ -1,7 +1,7 @@
-.. _integrator_features:
+.. _extend_application:
 
-Additional features
-===================
+Extend the application
+======================
 
 To add an additional component in the project in simple mode we should use an interface in simple mode,
 add a custom docker-compose service, add a custom JavaScript file.
@@ -37,5 +37,10 @@ Will be filled later.
 
 Custom JavaScript file
 ----------------------
+
+Will be filled later.
+
+Extend the geoportal image
+--------------------------
 
 Will be filled later.

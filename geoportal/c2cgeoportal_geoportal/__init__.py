@@ -404,6 +404,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
     # Configure 'locale' dir as the translation dir for c2cgeoportal app
     config.add_translation_dirs("c2cgeoportal_geoportal:locale/")
 
+    config.include("pyramid_mako")
     config.include("c2cwsgiutils.pyramid.includeme")
     health_check = HealthCheck(config)
     config.registry["health_check"] = health_check
