@@ -145,6 +145,12 @@ class SimpleEntry:
 
         set_common_headers(request, "index", Cache.PUBLIC_NO, content_type="text/html")
 
+        spinner = ""
+        spinner_filenames = self.get_ngeo_ressources("spinner*.svg")
+        if spinner_filenames:
+            with open(spinner_filenames[0], encoding="utf-8") as spinner_file:
+                spinner = spinner_file.read()
+
         return {
             "request": request,
             "header": f"""
@@ -158,7 +164,7 @@ class SimpleEntry:
                 ]
             ),
             "static": {
-                "spinner": self.get_ngeo_ressource_url(request, "spinner*.svg"),
+                "spinner": spinner,
                 "background-layer-button": request.static_url(
                     "/etc/geomapfish/static/images/background-layer-button.png"
                 ),
