@@ -18,7 +18,7 @@ cp -r CONST_create_template/${file} ${file}
 c2cciutils-checks
 cp ${PROJECT_DIR}/ci/project-config.yaml ci/config.yaml
 c2cciutils-checks
-./build
+CI=true ./build
 docker-compose down
 docker-compose up -d
 docker-compose exec -T geoportal bash -c 'PGHOST=externaldb PGDATABASE=test wait-db;'
