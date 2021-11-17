@@ -27,6 +27,8 @@ services:
     extends:
       file: docker-compose-lib.yaml
       service: db
+    ports:
+      - 54321:5432
     volumes:
       - postgresql_data:/var/lib/postgresql/data
       - ./ci/test-app-db:/docker-entrypoint-initdb.d
