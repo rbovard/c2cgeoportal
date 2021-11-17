@@ -45,6 +45,7 @@ ci/run-dc-logs docker-compose exec -T geoportal ci/test-new-project 'http://qgis
 ci/run-dc-logs docker-compose exec -T geoportal curl --insecure https://front/admin/ | grep Login
 ci/run-dc-logs docker-compose exec -T geoportal curl --insecure 'https://front/dynamic.json?interface=desktop&query=&path=%2F'
 ci/run-dc-logs docker-compose exec -T geoportal curl --insecure https://front/static-geomapfish/0/locales/fr.json
+ci/run-dc-logs docker-compose exec -T geoportal curl --insecure https://front/desktop_alt
 ci/run-dc-logs docker-compose exec -T geoportal curl --insecure https://front/desktop_alt | \
     grep '<script src="https://localhost:8484/static-ngeo-dist/desktop\..*\.js" crossorigin="anonymous"></script>'
 docker-compose stop qgisserver

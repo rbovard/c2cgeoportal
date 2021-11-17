@@ -71,7 +71,7 @@ def main() -> None:
                     "\n".join(
                         [
                             '<link rel="shortcut icon" '
-                            "href=\"${request.static_url('static//image/favicon.ico')}\" "
+                            "href=\"${request.static_url('/etc/geomapfish/static/images/favicon.ico')}\" "
                             'crossorigin="anonymous" />',
                             "<style>",
                             "  .spinner-loading-mask {",
