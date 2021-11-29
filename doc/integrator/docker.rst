@@ -61,22 +61,22 @@ Use ``docker system prune`` to clean files; you can add the ``--all`` option to 
 Environment variables
 ---------------------
 
-The GeoMapFish containers can be customised with some environment variables:
+The GeoMapFish containers can be customized with some environment variables:
 
 Config:
 
  * ``VISIBLE_WEB_HOST``: The web host visible by the browser e.-g.: 'example.com'.
  * ``VISIBLE_ENTRY_POINT``: The web path visible by the browser e.-g.: '/main/', default is '/'.
- * ``PGSCHEMA``: The postgres schema, used by mapserver.
- * ``GEOPORTAL_INTERNAL_URL``: Used by the print in non mutualised mode.
- * ``TILECLOUDCHAIN_INTERNAL_URL``: Used by the print in non mutualised mode.
+ * ``PGSCHEMA``: The postgres schema, used by MapServer.
+ * ``GEOPORTAL_INTERNAL_URL``: Used by the print in non mutualize mode.
+ * ``TILECLOUDCHAIN_INTERNAL_URL``: Used by the print in non mutualize mode.
  * ``ST_JOIN``: Can be ``ST_Collect`` (default) or ``ST_Union``, ``ST_Collect`` is better for performance but
    does not support restriction area intersection.
 
 Geoportal:
 
  * ``VISIBLE_ENTRY_POINT``: The web path visible by the browser e.-g.: '/main/', default is '/'.
- * ``PGSCHEMA``: The postgres schema, used by mapserver.
+ * ``PGSCHEMA``: The postgres schema, used by MapServer.
  * ``AUTHTKT_TIMEOUT``: See: :ref:`integrator_authentication`.
  * ``AUTHTKT_REISSUE_TIME``: See: :ref:`integrator_authentication`.
  * ``AUTHTKT_MAXAGE``: See: :ref:`integrator_authentication`.
