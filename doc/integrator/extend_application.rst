@@ -9,54 +9,18 @@ To add an additional component in the project in simple mode we should:
 - add a custom docker-compose service
 - add a custom JavaScript file
 
-Interface in canvas mode
-------------------------
+For that in this tutorial we will:
 
-Get the files from the ``CONST_create_template``:
+- Create an new Docker image for the new service
+- Integrate it to the project
+- Create the new interface based on canvas
+- Create a new WebComponent
+- Built it in the config image
+- Add it to the project
 
-.. prompt:: bash
 
-    mkdir -p geoportal/interfaces/
-    cp CONST_create_template/geoportal/interfaces/desktop_alt.html.mako \
-        geoportal/interfaces/desktop.html.mako
-    mkdir -p geoportal/<package>_geoportal/static/images/
-    cp CONST_create_template/geoportal/<package>_geoportal/static/images/background-layer-button.png \
-        geoportal/<package>_geoportal/static/images/
-
-In the file ``geoportal/interfaces/desktop.html.mako`` your can see that there is some HTML tags that
-have an attribute slot. The slot says where the component should be added:
-
-- ``header`` -> in the header part of the page.
-- ``data`` -> in the data panel on the left of the map.
-- ``tool-button`` -> in the tools on the right of the map.
-- ``tool-button-separate`` -> in the tools on the right of the map, for the shared button.
-- ``tool-<panel-name>`` -> in the tools panel on the right of the map, when the tool is activated.
-- ``footer-<panel-name>`` -> in the footer part of the page, when the panel is activated.
-
-In the ``vars.yaml`` file your interface should be declared like that:
-
-.. code:: yaml
-
-   interfaces:
-     - name: desktop
-       type: canvas
-       layout: desktop
-       default: true
-
-The ``name`` is the interface name as usual.
-The ``type`` should be set to 'canvas' to be able to get the canvas based interface present in the config image.
-The ``layout`` is used to get the JavaScript and CSS files from ngeo.
-The ``default`` is used to set the default interface as usual.
-
-In the file ``geoportal/interfaces/desktop.html.mako`` you will use the following variables:
-
-- ``request`` -> the Pyramid request.
-- ``header`` -> the header additional part of the page, the ``dynamicUrl`` and ``interface`` meta, and the CSS inclusion.
-- ``spinner`` -> the spinner SVG image content.
-- ``footer`` -> the footer additional part of the page, for the JavaScript inclusion.
-
-Custom docker-compose service
------------------------------
+Create an new Docker image for the new service
+----------------------------------------------
 
 In this chapter we will create a new Pyramid application that use cornice in a Docker image.
 
@@ -83,10 +47,19 @@ Apply the following diff in the ``setup.cfg``:
 .. code:: diff
 
    - known_first_party=c2cgeoportal_commons,c2cgeoportal_geoportal,c2cgeoportal_admin,geomapfish_geoportal
-   + known_third_party=webtest
    + known_first_party=c2cgeoportal_commons,c2cgeoportal_geoportal,c2cgeoportal_admin,geomapfish_geoportal,custom
 
-Add the following service in the ``docker-compose.yaml``:
+.. note::
+
+    The important files are:
+
+    - The Database model `custom/custom/models/feedback.py <https://github.com/camptocamp/demo_geomapfish/blob/master/custom/custom/models/feedback.py>`_
+    - The view `custom/custom/views/feedback.py <https://github.com/camptocamp/demo_geomapfish/blob/master/custom/custom/views/feedback.py>`_
+
+Integrate it to the project
+---------------------------
+
+Add the following service in the ``docker-compose.yaml``, with that we will be able to build and run the image:
 
 .. code:: yaml
 
@@ -100,7 +73,8 @@ Add the following service in the ``docker-compose.yaml``:
       - GUNICORN_CMD_ARGS=${GUNICORN_PARAMS}
       - VISIBLE_WEB_HOST
 
-Add the following service in the ``docker-compose.override.sample.yaml``:
+Add the following service in the ``docker-compose.override.sample.yaml``, To be able to run the service
+in debugging mode with auto reloading:
 
 .. code:: yaml
 
@@ -124,36 +98,72 @@ Add the following service in the ``docker-compose.override.sample.yaml``:
           headers={"Cookie": request.headers.get("Cookie"), "Referer": request.referrer},
       ).json()
 
-Custom JavaScript file
-----------------------
 
-In this example we will add a button in the tools bar, that open a new tool panel, that can be used to send a feedback.
+Create the new interface based on canvas
+----------------------------------------
+
+Get the files from the ``CONST_create_template``:
+
+.. prompt:: bash
+
+    mkdir -p geoportal/interfaces/
+    cp CONST_create_template/geoportal/interfaces/desktop_alt.html.mako \
+        geoportal/interfaces/desktop.html.mako
+    mkdir -p geoportal/<package>_geoportal/static/images/
+    cp CONST_create_template/geoportal/<package>_geoportal/static/images/background-layer-button.png \
+        geoportal/<package>_geoportal/static/images/
+
+In the ``vars.yaml`` file your interface should be declared like that:
+
+.. code:: yaml
+
+   interfaces:
+     - name: desktop
+       type: canvas
+       layout: desktop
+       default: true
+
+The ``name`` is the interface name as usual.
+The ``type`` should be set to 'canvas' to be able to get the canvas based interface present in the config image.
+The ``layout`` is used to get the JavaScript and CSS files from ngeo.
+The ``default`` is used to set the default interface as usual.
+
+In the file ``geoportal/interfaces/desktop.html.mako`` you will use the following variables:
+
+- ``request`` -> the Pyramid request.
+- ``header`` -> the header additional part of the page, the ``dynamicUrl`` and ``interface`` meta, and the CSS inclusion.
+- ``spinner`` -> the spinner SVG image content.
+- ``footer`` -> the footer additional part of the page, for the JavaScript inclusion.
+
+Your can also see that there is some HTML tags that have an attribute slot.
+The slot says where the component should be added:
+
+- ``header`` -> in the header part of the page.
+- ``data`` -> in the data panel on the left of the map.
+- ``tool-button`` -> in the tools on the right of the map.
+- ``tool-button-separate`` -> in the tools on the right of the map, for the shared button.
+- ``tool-<panel-name>`` -> in the tools panel on the right of the map, when the tool is activated.
+- ``footer-<panel-name>`` -> in the footer part of the page, when the panel is activated.
+
+
+Create a new WebComponent
+-------------------------
+
+In this tutorial we will create a new WebComponent based on `Lit <https://lit.dev/>`_,
+and build by `Vite <https://vitejs.dev/>`_.
+
+We will add a button in the tools bar, that open a new tool panel, that can be used to send a feedback.
 
 The tool button should be an instance of
 `gmfapi.elements.ToolButtonElement<https://camptocamp.github.io/ngeo/|main_branch|/apidoc/classes/srcapi_elements_ToolButtonElement.default.html>`_.
 
-In this example we will directly use
+We will directly use
 `gmf-tool-button<https://camptocamp.github.io/ngeo/|main_branch|/apidoc/classes/srcapi_elements_ToolButtonElement.ToolButtonDefault.html>`_.
-
-Then we will include the following HTML in the canvas element, in ``geoportal/interfaces/desktop.html.mako``:
-
-```html
-<gmf-tool-button slot="tool-button" iconClasses="fas fa-file-signature" panelName="feedback"></gmf-tool-button>
-```
-
-The panel will be included with the following HTML:
-
-```html
-<proj-feedback slot="tool-panel-feedback"></proj-feedback>
-```
 
 And panel should be an instance of:
 `gmfapi.elements.ToolPanelElement<https://camptocamp.github.io/ngeo/|main_branch|/apidoc/classes/srcapi_elements_ToolPanelElement.default.html>`_.
 
-
-In this tutorial we will create a new WebComponent based on `Lit <https://lit.dev/>`_,
-and build by `Vite <https://vitejs.dev/>`_. We will directly get the component and the build environment
-from the demo:
+We will directly get the existing component from the demo.
 
 .. prompt:: bash
 
@@ -166,21 +176,23 @@ from the demo:
       /tmp/demo_geomapfish/tsconfig.json \
       /tmp/demo_geomapfish/vite.config.ts .
 
-Add the following lines in the ``.dockerignore``:
-
-.. code::
-
-   !webcomponents/
-   !package.json
-   !package-lock.json
-   !tsconfig.json
-   !vite.config.ts
 
 Add the following lines in the ``.gitignore``:
 
 .. code::
 
    /node_modules
+
+.. note::
+
+    The web component file is `custom/webcomponents/feedback.tspy <https://github.com/camptocamp/demo_geomapfish/blob/master/custom/webcomponents/feedback.ts>`_.
+
+
+Built it in the config image
+----------------------------
+
+In the ``Dockerfile`` we will add two stages, one to build the WebComponent and an other just to add the
+build artifacts to the config image.
 
 Add the following lines at the end of ``Dockerfile``:
 
@@ -204,10 +216,44 @@ Add the following lines at the end of ``Dockerfile``:
    FROM gmf_config AS config
    COPY --from=custom-build /app/dist/ /etc/geomapfish/static/custom/
 
+Add the following lines in the ``.dockerignore``:
+
+.. code::
+
+   !webcomponents/
+   !package.json
+   !package-lock.json
+   !tsconfig.json
+   !vite.config.ts
+
+Add it to the project
+---------------------
+
+Then we will include the following HTML in the canvas element, in ``geoportal/interfaces/desktop.html.mako``:
+
+```html
+<gmf-tool-button slot="tool-button" iconClasses="fas fa-file-signature" panelName="feedback"></gmf-tool-button>
+```
+
+The panel will be included with the following HTML:
+
+```html
+<proj-feedback slot="tool-panel-feedback"></proj-feedback>
+```
+
+The modifications in the ``vars`` file are:
+- Add the JavaScript file as ``gmfCustomJavascriptUrl``.
+- Be sure that we have the CSS file as ``gmfCustomStylesheetUrl``.
+- Add in comment all the needed configuration to be able to debug.
+
 Apply the following diff in the ``geoportal/vars.yaml``:
 
 .. code:: diff
 
+     vars:
+       interfaces_config:
+         desktop:
+           constants:
    +
    +         # For dev, the corresponding values in static should also be commented.
    +         # gmfCustomJavascriptUrl:
@@ -217,7 +263,7 @@ Apply the following diff in the ``geoportal/vars.yaml``:
    +         sitnFeedbackPath: custom/feedback
    +
    +       static:
-   +         # Those tow lines should be commented in dev mode.
+   +         # Those two lines should be commented in dev mode.
    +         gmfCustomJavascriptUrl:
    +           name: '/etc/geomapfish/static/custom/custom.es.js'
    +         gmfCustomStylesheetUrl:
@@ -227,22 +273,22 @@ Apply the following diff in the ``geoportal/vars.yaml``:
    +         gmfBase:
    +           name: base
 
-   -   content_security_policy_main_script_src_extra: "'unsafe-eval'"
-   +   content_security_policy_main_script_src_extra: "'unsafe-eval' http://localhost:3001"
+   +   # For dev this line should be commented.
+       content_security_policy_main_script_src_extra: "'unsafe-eval'"
+   +   # For dev this line is needed to allow the page to load the files from Vite dev server.
+   +   # content_security_policy_main_script_src_extra: "'unsafe-eval' http://localhost:3001"
 
 Working with Custom JavaScript and service
 ------------------------------------------
 
+The usual build and run will also work for the custom JavaScript and service.
 Build and run as usual:
 
-.. prompt:: bash
+To have a development environment, with auto-reload mode we will start the Vite dev server
+locally on port ``3001``.
 
-    ./build <params>
-    docker-compose down
-    docker-compose up -d
-
-To have a development environment, with auto-reload mode you should apply the following diff in the
-``geoportal/vars.yaml`` (don't commit them):
+We also need to get the file from the Vite dev server, wot that we need to do the following modifications
+in the ``geoportal/vars.yaml`` (don't commit them):
 
 .. code:: diff
 
@@ -261,17 +307,19 @@ To have a development environment, with auto-reload mode you should apply the fo
    +          # gmfCustomJavascriptUrl:
    +          #   name: '/etc/geomapfish/static/custom/custom.es.js'
 
+
+        # For dev this line should be commented.
+   -    content_security_policy_main_script_src_extra: "'unsafe-eval'"
+   +    # content_security_policy_main_script_src_extra: "'unsafe-eval'"
+        # For dev this line is needed to allow the page to load the files from Vite dev server.
+   -    # content_security_policy_main_script_src_extra: "'unsafe-eval' http://localhost:3001"
+   +    content_security_policy_main_script_src_extra: "'unsafe-eval' http://localhost:3001"
+
 Rename the ``docker-compose.override.sample.yaml`` file to ``docker-compose.override.yaml``.
 
-Build and run as usual:
+Build and run as usual.
 
-.. prompt:: bash
-
-    ./build <params>
-    docker-compose down
-    docker-compose up -d
-
-The download and start the Vite dev server:
+Download and start the Vite dev server:
 
 .. prompt:: bash
 
