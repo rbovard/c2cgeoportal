@@ -30,11 +30,7 @@ html_theme_path = [alabaster.get_path()]
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = [
-    "sphinx-prompt",
-    "alabaster",
-    "sphinx-jsonschema",
-]
+extensions = ["sphinx-prompt", "alabaster", "sphinx-jsonschema", "sphinx_js"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -251,6 +247,10 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+js_language = "typescript"
+js_source_path = "node_modules/ngeo/srcapi"
+jsdoc_config_path = "node_modules/ngeo/srcapi/typedoc.json"
 
 
 def setup(app: sphinx.application.Sphinx) -> None:
