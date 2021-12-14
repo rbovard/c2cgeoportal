@@ -1,0 +1,20 @@
+{
+  "name": "geomapfish-geoportal-build",
+  "version": "1.0.0",
+  "description": "GeoMapFish geoportal interface",
+  "author": "",
+  "dependencies": {
+    "@types/bootstrap": "4.5.0",
+    "@types/geojson": "7946.0.8",
+    "@types/node": "16.11.12",
+    "@types/typeahead": "0.11.32",
+    "@sentry/browser": "6.16.1",
+    "i18next": "21.6.0",
+    "i18next-browser-languagedetector": "6.1.2",
+    "jquery": "3.6.0",
+    "lit": "2.0.2",
+    "ngeo": "2.7.0-latest.20211213T190130Z.442ca4d0d.HEAD",
+    "ol": "6.9.0",
+    "rxjs": "7.4.0"
+  }
+}

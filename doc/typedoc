@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "$@"
+
+while [ $1 != '--json' ]
+do
+    shift
+done
+
+ls -als /doc/ngeoapi-doc.json
+echo $2
+cp /doc/ngeoapi-doc.json $2
+ls -als $2

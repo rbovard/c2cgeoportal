@@ -248,9 +248,11 @@ texinfo_documents = [
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
 
+primary_domain = "js"
 js_language = "typescript"
-js_source_path = "node_modules/ngeo/srcapi"
-jsdoc_config_path = "node_modules/ngeo/srcapi/typedoc.json"
+js_source_path = "node_modules/ngeo/"
+jsdoc_config_path = "node_modules/ngeo/tsconfig.json"
+# jsdoc_config_path = "node_modules/ngeo/typedoc.json"
 
 
 def setup(app: sphinx.application.Sphinx) -> None:

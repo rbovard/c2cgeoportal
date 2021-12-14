@@ -48,7 +48,7 @@ In this file, you can add some blocks like
 to include a web-component in a specific slot (one UI part of the app).
 
 You can find the available component in the
-`ngeo documentation <https://camptocamp.github.io/ngeo/${MAIN_BRANCH}/apidoc/>`_.
+`ngeo documentation <https://camptocamp.github.io/ngeo/master/apidoc/>`_.
 
 The controller (``js`` file) is commonly named ``mainCtrl``. So you can use a value
 from the controller by doing the following (here, the controller is the ``DesktopController``):
@@ -127,8 +127,8 @@ The sub section is the interface name, and after that we have:
 The dynamic values names are: ``interface``, ``cache_version``, ``lang_urls``, ``fulltextsearch_groups``.
 
 The possible values are described in the ngeo documentation
-`ngeo constants <https://camptocamp.github.io/ngeo/${MAIN_BRANCH}/jsdoc/module-src_options.html>`_,
-`gmf constants <https://camptocamp.github.io/ngeo/${MAIN_BRANCH}/jsdoc/module-contribs_gmf_src_options.html>`_.
+`ngeo constants <https://camptocamp.github.io/ngeo/master/jsdoc/module-src_options.html>`_,
+`gmf constants <https://camptocamp.github.io/ngeo/master/jsdoc/module-contribs_gmf_src_options.html>`_.
 
 CSS style
 ---------

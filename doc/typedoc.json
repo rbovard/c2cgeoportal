@@ -1,0 +1,9 @@
+{
+  "name": "ngeo",
+  "entryPoints": ["srcapi"],
+  "entryPointStrategy": "expand",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "exclude": ["**/examples/**", "**/test/**", "**/node_modules/rxjs/**", "**/.build/**"]
+}
