@@ -163,7 +163,7 @@ RUN echo 'complete -C aws_completer aws' >> /etc/bash_completion.d/aws_completer
 RUN mv /usr/bin/bashrc ~/.bashrc
 COPY scripts/clone_schema.sql /opt/
 
-WORKDIR /src
+WORKDIR /app
 
 
 #############################################################################################################
